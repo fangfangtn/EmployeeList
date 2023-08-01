@@ -41,7 +41,7 @@ const Home = () => {
         const tempList = [...employeeList]
         tempList.splice(indexDelete, 1)
         _setEmployeeList(tempList)
-        toast('đã xóa thành công')
+        toast('xóa thành công')
     }
 
     const handleEdit = (data: IEmployee) => {

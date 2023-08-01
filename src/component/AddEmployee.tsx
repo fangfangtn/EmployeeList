@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { IEmployee } from './Employee.type'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
     btnBack: () => void,
@@ -27,6 +29,15 @@ const AddEmployee = (props: Props) => {
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
+        if (!firstName || !lastName || !email) {
+            toast('không được để trống ô nào')
+            return
+        }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          toast('hãy nhập đúng định dạng email');
+          return;
+        }
         const data: IEmployee = {
             id: new Date().toJSON().toString(),
             firstName: firstName,
