@@ -3,6 +3,8 @@ import { IEmployee, PageEnum } from './Employee.type'
 import EmployeeList from './EmployeeList'
 import AddEmployee from './AddEmployee'
 import EditEmployee from './EditEmployee'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Home = () => {
     const [employeeList, setEmployeeList] = useState([] as IEmployee[])
@@ -31,6 +33,7 @@ const Home = () => {
 
     const handleAdd = (data: IEmployee) => {
         _setEmployeeList([...employeeList, data])
+        toast('thêm mới thành công')
     }
 
     const handleDelete = (data: IEmployee) => {
@@ -38,6 +41,7 @@ const Home = () => {
         const tempList = [...employeeList]
         tempList.splice(indexDelete, 1)
         _setEmployeeList(tempList)
+        toast('đã xóa thành công')
     }
 
     const handleEdit = (data: IEmployee) => {
@@ -51,8 +55,9 @@ const Home = () => {
         const tempData = [...employeeList]
         tempData[indexUpdate] = data
         _setEmployeeList(tempData)
+        toast('cập nhật thành công')
     }
-    
+
     return (
         <>
             <article className='font-bold text-center'>
@@ -70,6 +75,7 @@ const Home = () => {
                 {showPage === PageEnum.add && <AddEmployee btnBack={showListPage} btnSubmit={handleAdd}/>}
                 {showPage === PageEnum.edit && <EditEmployee data={dataEdit} btnBack={showListPage} btnUpdate={handleUpdate}/>}
             </section>
+            <ToastContainer/>
         </>
     )
 }
