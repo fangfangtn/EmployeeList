@@ -1,6 +1,5 @@
-import React from 'react'
 import './EmployeeModal.style.css'
-import { IEmployee } from './Employee.type'
+import { IEmployee } from './ListEmployeeComponent'
 
 type Props = {
     onClose: () => void,
