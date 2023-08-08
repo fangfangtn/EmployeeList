@@ -20,18 +20,11 @@ const ListEmployeeComponent = () => {
     const [employees, setEmployees] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [dataToShow, setDataToShow] = useState(null as IEmployee | null)
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false)
     const [dataToDeleteId, setDataToDeleteId] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    function closeModalDelete() {
-        setIsOpen(false)
-      }
-    
-      function openModalDelete(employeeId: string) {
-        setDataToDeleteId(employeeId);
-        setIsOpen(true)
-      }
+    const navigate = useNavigate();
 
     useEffect(() => {
         getAllEmployees();
@@ -47,6 +40,15 @@ const ListEmployeeComponent = () => {
     }
 
     const closeModal = () => setShowModal(false)
+
+    function closeModalDelete() {
+        setIsOpen(false)
+      }
+    
+      function openModalDelete(employeeId: string) {
+        setDataToDeleteId(employeeId);
+        setIsOpen(true)
+      }
 
     const getAllEmployees = () => {
         EmployeeService.getAllEmployee()
@@ -67,10 +69,26 @@ const ListEmployeeComponent = () => {
         });
     }
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; 
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = employees.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(employees.length / itemsPerPage);
+
     return (
         <div className="space-y-10 mx-20 mt-10">
             <h1 className="text-center font-bold text-[30px]"> List Employees </h1>
             <Link to="/add-employee" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5" > Add Employee </Link>
+            <input
+                type="text"
+                placeholder="Search employees"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-3 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mx-20"
+            />
+
             <table className="table table-bordered table-striped">
                 <thead>
                     <th> Employee First Name </th>
@@ -80,7 +98,14 @@ const ListEmployeeComponent = () => {
                 </thead>
                 <tbody>
                     {
-                        employees.map(
+                        currentItems
+                        .filter(
+                            (employee: IEmployee) =>
+                                employee.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                employee.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                employee.email.toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .map(
                             (employee: IEmployee)  =>
                                 <tr key={employee.id}>
                                     <td> {employee.firstName} </td>
@@ -99,6 +124,26 @@ const ListEmployeeComponent = () => {
                 </tbody>
                 {showModal && dataToShow !== null && (<EmployeeModal onClose={closeModal} data={dataToShow}/>)}
             </table>
+            <div className="pagination text-center space-y-5">
+                <p>
+                    Page {currentPage} of {totalPages}
+                </p>
+                <div className='space-x-5'>
+                    <button
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={indexOfLastItem >= employees.length}
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
+
             <ToastContainer/>
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
