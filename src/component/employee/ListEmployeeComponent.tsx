@@ -68,8 +68,8 @@ const ListEmployeeComponent = () => {
     }
 
     return (
-        <div className="space-y-5 table-fixed">
-            <h1 className="text-center font-bold"> List Employees </h1>
+        <div className="space-y-10 mx-20 mt-10">
+            <h1 className="text-center font-bold text-[30px]"> List Employees </h1>
             <Link to="/add-employee" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5" > Add Employee </Link>
             <table className="table table-bordered table-striped">
                 <thead>
@@ -89,9 +89,9 @@ const ListEmployeeComponent = () => {
                                     <td className='flex'>
                                         <Link to={`/edit-employee/${employee.id}`} ><EditPencil/></Link>
                                         <DeleteCircle onClick={() => openModalDelete(employee.id)}
-                                            style={{ marginLeft: "50px" }}/>
+                                            style={{ marginLeft: "30px" }}/>
                                         <EyeAlt onClick={() => viewEmployee(employee.id)}
-                                            style={{ marginLeft: "50px" }}/>
+                                            style={{ marginLeft: "30px" }}/>
                                     </td>
                                 </tr>
                         )
@@ -138,7 +138,7 @@ const ListEmployeeComponent = () => {
                                         </p>
                                     </div>
 
-                                    <div className="mt-4 space-x-[50%]">
+                                    <div className="grid grid-cols-2 mt-4 gap-5">
                                         <button
                                             type="button"
                                             className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
