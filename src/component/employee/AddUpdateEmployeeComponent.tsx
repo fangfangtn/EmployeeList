@@ -16,20 +16,23 @@ const AddUpdateEmployeeComponent = () => {
         e.preventDefault();
         const employee = { firstName, lastName, email }
         if (id) {
-            EmployeeService.updateEmployee(id, employee).then((response: any) => {      
-                setTimeout(()=>{ navigate('/employees')},2000)   
+            EmployeeService.updateEmployee(id, employee)
+            .then((response: any) => {      
+                setTimeout(()=>{ navigate('/employees')},500)   
             })
             toast('cập nhật thành công')
         } else {
-            EmployeeService.createEmployee(employee).then((response: any) => {
-                setTimeout(()=>{ navigate('/employees')},2000)
+            EmployeeService.createEmployee(employee)
+            .then((response: any) => {
+                setTimeout(()=>{ navigate('/employees')},500)
             })
             toast('thêm mới thành công')
         }
     }
 
     useEffect(() => {
-        EmployeeService.getEmployeeById(`${id}`).then((response: any) => {
+        EmployeeService.getEmployeeById(`${id}`)
+        .then((response: any) => {
             setFirstName(response.data.firstName)
             setLastName(response.data.lastName)
             setEmail(response.data.email)
@@ -91,6 +94,7 @@ const AddUpdateEmployeeComponent = () => {
                                     >
                                     </input>
                                 </div>
+                                
                                 <div className='flex'>
                                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5 mx-5" type="button" onClick={(e) => saveOrUpdateEmployee(e)} >Submit </button>
                                     <Link to="/employees" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline my-5" type="button"> Cancel </Link>
