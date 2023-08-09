@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import EmployeeService from './EmployeeService';
 import "./EmployeeList.style.css"
-import { EditPencil, DeleteCircle, EyeAlt } from 'iconoir-react';
+import { EditPencil, DeleteCircle, EyeAlt, Sort } from 'iconoir-react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EmployeeModal from './EmployeeModal'
@@ -23,6 +23,7 @@ const ListEmployeeComponent = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [dataToDeleteId, setDataToDeleteId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const navigate = useNavigate();
 
@@ -69,13 +70,31 @@ const ListEmployeeComponent = () => {
         });
     }
 
-    const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; 
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = employees.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(employees.length / itemsPerPage);
+
+    const [sortType, setSortType] = useState<'name' | 'email'>('name');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+    const sortEmployees = () => {
+        const sortedEmployees = [...employees].sort((a: IEmployee, b: IEmployee) => {
+            const valueA = sortType === 'name' ? a.firstName.toLowerCase() : a.email.toLowerCase();
+            const valueB = sortType === 'name' ? b.firstName.toLowerCase() : b.email.toLowerCase();
+    
+            if (sortOrder === 'asc') {
+                return valueA.localeCompare(valueB);
+            } else {
+                return valueB.localeCompare(valueA);
+            }
+        });
+    
+        setEmployees(sortedEmployees);
+    };
+    
 
     return (
         <div className="space-y-10 mx-20 mt-10">
@@ -91,7 +110,15 @@ const ListEmployeeComponent = () => {
 
             <table className="table table-bordered table-striped">
                 <thead>
-                    <th> Employee First Name </th>
+                    <th> 
+                        Employee First Name 
+                        <Sort className='cursor-pointer' 
+                        onClick={() => {
+                        setSortType('name');
+                        sortEmployees();
+                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                    }}/>
+                    </th>
                     <th> Employee Last Name </th>
                     <th> Employee Email Id </th>
                     <th> Actions </th>
@@ -129,21 +156,33 @@ const ListEmployeeComponent = () => {
                     Page {currentPage} of {totalPages}
                 </p>
                 <div className='space-x-5'>
-                    <button
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Previous
-                    </button>
-                    <button
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        disabled={indexOfLastItem >= employees.length}
-                    >
-                        Next
-                    </button>
+                <button
+                    onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                    disabled={currentPage === 1}
+                    className={`pagination-button`}
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                    disabled={indexOfLastItem >= employees.length}
+                    className={`pagination-button`}
+                >
+                    Next
+                </button>
+                </div>
+                <div className="page-numbers">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={`pagination-number ${index + 1 === currentPage ? 'active' : ''}`}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
-
             <ToastContainer/>
             <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -213,4 +252,5 @@ const ListEmployeeComponent = () => {
         </div>
     )
 }
+
 export default ListEmployeeComponent;
